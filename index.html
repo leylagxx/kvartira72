@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="3D-модель студии 37,4 м² по этапам ремонта: сантехника, электрика, чистовая, мебель и смета.">
+<title>Квартира 72 в 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:light}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{
+  --bg:#EFEDE9; --panel:#FAF9F7; --ink:#2B2B2A; --muted:#6E6A64; --line:#D9D5CE; --accent:#2B2B2A; --accent-ink:#FAF9F7;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ color-scheme:dark;
+    --bg:#1D1D1C; --panel:#262625; --ink:#EDEBE7; --muted:#A39F98; --line:#3A3936; --accent:#EDEBE7; --accent-ink:#1D1D1C; }
+}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --bg:#1D1D1C; --panel:#262625; --ink:#EDEBE7; --muted:#A39F98; --line:#3A3936; --accent:#EDEBE7; --accent-ink:#1D1D1C; }
+body{background:var(--bg);color:var(--ink);font-family:"Onest",system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-size:26px;font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:18px;font-weight:600;margin:0}
+.sub{color:var(--muted);margin:2px 0 0}
+.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px}
+.stages button{border:0;background:transparent;padding:10px 8px;border-radius:8px;text-align:left;display:flex;flex-direction:column;gap:1px}
+.stages button small{font-size:12px;color:var(--muted)}
+.stages button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.stages button[aria-pressed="true"] small{color:var(--accent-ink);opacity:.75}
+@media (max-width:560px){.stages{grid-template-columns:repeat(2,1fr)}}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#E9E6E1;height:min(72vh,640px);min-height:380px;touch-action:none}
+canvas{display:block;width:100%;height:100%;cursor:grab}
+canvas:active{cursor:grabbing}
+.tags{position:absolute;inset:0;pointer-events:none}
+.tag{position:absolute;transform:translate(-50%,-50%);background:rgba(250,249,247,.92);color:#2B2B2A;font-size:12px;font-weight:500;padding:3px 8px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.tag small{color:#6E6A64;font-weight:400;margin-left:4px}
+.dim{position:absolute;transform:translate(-50%,-50%);background:#2B2B2A;color:#fff;font-size:11px;font-weight:500;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.num{position:absolute;transform:translate(-50%,-50%);min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:11px;font-weight:600;line-height:18px;text-align:center;color:#fff;box-shadow:0 0 0 1.5px #fff}
+.controls{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:#6E6A64;background:rgba(250,249,247,.85);padding:3px 8px;border-radius:6px;pointer-events:none}
+.info{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:760px){.info{grid-template-columns:1fr}}
+.info p{margin:6px 0 0;max-width:62ch}
+.info ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.when{display:inline-block;font-size:12px;font-weight:500;letter-spacing:.03em;color:var(--muted);text-transform:uppercase}
+.keys{display:flex;flex-wrap:wrap;gap:8px 14px}
+.keys div{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.keys i{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid var(--line)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n span{display:inline-block;min-width:22px;height:20px;line-height:20px;border-radius:10px;color:#fff;font-size:12px;font-weight:600;text-align:center}
+td.h{white-space:nowrap}
+.room td{background:var(--bg);font-weight:500;font-size:13px}
+.note{color:var(--muted);font-size:13px;margin:0}
+.est-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.est-tiles div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.est-tiles span{font-size:13px;color:var(--muted)}
+.est-tiles b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.est-tiles .total{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.est-tiles .total span{color:var(--accent-ink);opacity:.75}
+#est table{min-width:760px}
+#est td.num-c,#est th.num-c{text-align:right;white-space:nowrap}
+#est input{font:inherit;font-size:14px;width:92px;text-align:right;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:3px 6px;font-variant-numeric:tabular-nums}
+#est input.q{width:64px}
+#est input:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+#est .sec td{background:var(--bg);font-weight:600}
+#est .sec small{font-weight:400;color:var(--muted);margin-left:8px}
+#est .sub td{font-weight:500;color:var(--muted)}
+#est td.who{color:var(--muted);font-size:13px}
+#est .src{display:inline-block;font-size:11px;font-weight:500;padding:0 6px;border-radius:999px;background:#DDEBDF;color:#24593A;white-space:nowrap;vertical-align:1px}
+#est .cn{display:inline-block;font-size:12px;font-weight:500;padding:1px 7px;border-radius:999px;background:#FBE3DC;color:#8A2E17;white-space:nowrap}
+#est tr.cnrow td:first-child{box-shadow:inset 3px 0 0 #D9553A}
+.est-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Квартира 72 · 37,4 м²</h1>
+      <p class="sub">Потолок 3 м. Размеры по техпаспорту, мебель и точки примерные. Этапы идут по порядку ремонта.</p>
+    </div>
+    <div class="controls">
+      <button id="v3d" aria-pressed="true">3D вид</button>
+      <button id="vtop" aria-pressed="false">Сверху</button>
+      <button id="vbed" aria-pressed="false">Из гостиной</button>
+      <button id="walls" aria-pressed="false">Высокие стены</button>
+      <button id="labels" aria-pressed="true">Подписи</button>
+    </div>
+  </header>
+
+  <div class="stages" role="group" aria-label="Этап ремонта">
+    <button id="m-plumb" aria-pressed="false">1. Сантехника<small>черновая, папа</small></button>
+    <button id="m-elec" aria-pressed="false">2. Электрика<small>черновая, электрик</small></button>
+    <button id="m-finish" aria-pressed="false">3. Чистовая<small>отделка без мебели</small></button>
+    <button id="m-furn" aria-pressed="true">4. С мебелью<small>готовая квартира</small></button>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="c"></canvas>
+    <div class="tags" id="tags"></div>
+    <div class="hint">Тяните — вращать, колесо или два пальца — приблизить</div>
+  </div>
+
+  <section class="info">
+    <div>
+      <span class="when" id="when"></span>
+      <h2 id="stTitle"></h2>
+      <p id="stText"></p>
+      <ul id="stList"></ul>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="keys" id="keys"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><button id="warm" aria-pressed="true">Тёплый пол</button><button id="part" aria-pressed="false">Открыть перегородку</button></div>
+    </div>
+  </section>
+
+  <section id="tableSec" style="display:flex;flex-direction:column;gap:8px">
+    <h2 id="tblTitle"></h2>
+    <p class="note" id="tblNote"></p>
+    <div class="tablewrap"><table><thead><tr><th>№</th><th>Что</th><th>Высота от пола</th><th>Где: расстояние до центра точки</th><th>Линия</th></tr></thead><tbody id="tbody"></tbody></table></div>
+  </section>
+
+  <section id="est" style="display:flex;flex-direction:column;gap:12px;padding-top:12px;border-top:1px solid var(--line)">
+    <div class="est-head">
+      <div>
+        <h2 style="font-size:22px">Смета ремонта под ключ</h2>
+        <p class="note" style="margin-top:4px;max-width:70ch">Количество посчитано по 3D-модели: 48 точек электрики, 17 точек сантехники, площади стен и пола. Цены с пометкой <span class="src">satu.kz</span> взяты с satu.kz (Алматы, 29.09.2026) — средние из найденных предложений. Остальные, особенно работа мастеров, — примерные: уточните у бригады. Меняйте количество и цену прямо в таблице — итоги пересчитаются. Правки сохраняются только в вашем браузере. Позиции с ценой в столбце «Из Китая» выгоднее заказать через карго (цена уже с доставкой, примерно) — заказывать в начале ноября.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><button id="estCn" aria-pressed="false">Считать с заказом из Китая</button><button id="estReset">Вернуть исходные цены</button></div>
+    </div>
+    <div class="est-tiles" id="estTiles"></div>
+    <div class="tablewrap"><table><thead><tr><th>Позиция</th><th class="num-c">Кол-во</th><th>Ед.</th><th class="num-c">Цена, ₸</th><th class="num-c">Сумма, ₸</th><th>Кто</th><th>Из Китая</th></tr></thead><tbody id="estBody"></tbody></table></div>
+    <p class="note">Работа по сантехнике не считается — её делает папа. Кондиционер посчитан с монтажом. Входная дверь, окна и батареи уже есть от застройщика.</p>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const stage=document.getElementById('stage'), canvas=document.getElementById('c'), tagsEl=document.getElementById('tags');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+const scene=new THREE.Scene(); scene.background=new THREE.Color('#E9E6E1');
+const camera=new THREE.PerspectiveCamera(40,1,0.1,100);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0xb8ad9c,0.75));
+const sun=new THREE.DirectionalLight(0xfff4e6,0.65);
+sun.position.set(6,10,14); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8,near:1,far:40}); sun.shadow.bias=-0.0005;
+sun.target.position.set(2.45,0,4.1); scene.add(sun,sun.target);
+
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.85,metalness:0},o));
+const mat={wall:M('#E4E2DE'),oak:M('#C9B79C',{roughness:0.7}),white:M('#F7F6F3',{roughness:0.5}),stone:M('#D8D4CD',{roughness:0.6}),
+ textile:M('#9A9690'),dark:M('#2B2B2A',{roughness:0.5}),tile:M('#CFCAC2',{roughness:0.4}),grey:M('#BDB8B0'),
+ glass:M('#CFE0E4',{transparent:true,opacity:0.22,roughness:0.05}),balc:M('#B9B4AC'),linen:M('#EDEAE4'),wood:M('#A8906F',{roughness:0.6}),
+ screen:M('#151515',{roughness:0.2}),mirror:M('#DCE4E6',{roughness:0.08}),concrete:M('#A9A6A0',{roughness:0.95}),
+ ghost:M('#7F93A8',{transparent:true,opacity:0.16,depthWrite:false})};
+const WALL_FIN='#E4E2DE', WALL_ROUGH='#BFBBB4';
+
+let P=scene; // current parent group
+function B(x0,x1,y0,y1,z0,z1,m,parent){
+  if(x1<=x0||y1<=y0||z1<=z0) return null;
+  const g=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),m);
+  g.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2); g.castShadow=m!==mat.glass&&!m.transparent; g.receiveShadow=true;
+  (parent||P).add(g); return g;
+}
+function Cyl(x,z,r,y0,y1,m,parent){
+  const g=new THREE.Mesh(new THREE.CylinderGeometry(r,r,y1-y0,24),m);
+  g.position.set(x,(y0+y1)/2,z); g.castShadow=true; g.receiveShadow=true; (parent||P).add(g); return g;
+}
+const grp=()=>{const g=new THREE.Group();scene.add(g);return g;};
+const finishG=grp(), fixG=grp(), furnG=grp(), warmG=grp(), elecG=grp(), plumbG=grp(), plateG=grp();
+
+// ===== floor =====
+const floorMain=B(0,4.9,-0.02,0,0,8.28,mat.oak,scene);
+B(-0.01,1.64,0,0.005,6.2,8.28,mat.balc,scene);
+B(-0.3,5.2,-0.2,-0.02,-0.3,8.6,mat.grey,scene);
+P=finishG;
+B(0,2.1,0,0.004,0,2.0,mat.tile);
+B(2.2,4.9,0,0.004,0,2.1,mat.tile);
+const warmM=M('#E2703A',{transparent:true,opacity:0.45,emissive:'#E2703A',emissiveIntensity:0.25});
+[[2.55,4.25,0.1,2.05],[2.25,2.55,1.0,2.05],[4.25,4.85,0.05,0.8],[0.6,2.05,0.78,1.46]].forEach(([a,b,c,d])=>B(a,b,0.006,0.01,c,d,warmM,warmG));
+
+// ===== walls =====
+let wallGroup=null, partG=null, H=1.1, partPanels=[], partOpen=false;
+function wall(x0,x1,z0,z1,openings,g,m){
+  const alongX=(x1-x0)>(z1-z0); const s0=alongX?x0:z0, s1=alongX?x1:z1;
+  const cuts=(openings||[]).slice().sort((p,q)=>p.a-q.a);
+  let cur=s0; const mk=(a,b,y0,y1,mm)=>{ y1=Math.min(y1,H); if(y1<=y0) return;
+    alongX?B(a,b,y0,y1,z0,z1,mm||m||mat.wall,g):B(x0,x1,y0,y1,a,b,mm||m||mat.wall,g); };
+  for(const o of cuts){ mk(cur,o.a,0,H+5); mk(o.a,o.b,0,o.y0); mk(o.a,o.b,o.y1,H+5); if(o.glass) mk(o.a,o.b,o.y0,o.y1,mat.glass); cur=o.b; }
+  mk(cur,s1,0,H+5);
+}
+function buildWalls(){
+  if(wallGroup) scene.remove(wallGroup);
+  if(partG) finishG.remove(partG);
+  const g=new THREE.Group(); wallGroup=g; scene.add(g); const t=0.15;
+  wall(-t,4.9+t,-t,0,[{a:3.75,b:4.55,y0:0,y1:2.1}],g);
+  wall(4.9,4.9+t,-t,8.28+t,[],g);
+  wall(1.53,4.9+t,8.28,8.28+t,[{a:2.55,b:4.0,y0:0.85,y1:2.45,glass:true}],g);
+  wall(1.53,1.65,6.2,8.28,[],g);
+  wall(-t,1.65,6.08,6.2,[{a:0.35,b:1.25,y0:0,y1:2.2,glass:true}],g);
+  wall(-t,0,-t,6.2,[],g);
+  wall(-t,0,6.2,8.28+t,[{a:6.2,b:8.28+t,y0:1.0,y1:2.75,glass:true}],g);
+  wall(-t,1.53,8.28,8.28+t,[{a:-t,b:1.53,y0:1.0,y1:2.75,glass:true}],g);
+  wall(2.1,2.2,0,2.1,[{a:1.0,b:1.7,y0:0,y1:2.1}],g);
+  wall(0,2.2,2.0,2.1,[],g);
+  // glass partition (installed at finishing stage)
+  const pg=new THREE.Group(); partG=pg; finishG.add(pg);
+  // 4 sliding panels on parallel ceiling tracks; all stack to the left when open
+  const top=H<2?H+0.4:3.0, w=(4.9-1.65)/4;
+  B(1.65,4.9,top-0.05,top,6.0,6.22,mat.dark,pg);
+  partPanels=[];
+  for(let i=0;i<4;i++){
+    const g=new THREE.Group(); pg.add(g);
+    B(0,w+0.03,0.02,top-0.06,-0.012,0.012,mat.glass,g);
+    [0,w/2+0.015,w+0.03].forEach(x=>B(x-0.02,x+0.02,0.02,top-0.06,-0.02,0.02,mat.dark,g));
+    [0.02,1.05,top-0.08].forEach(y=>B(0,w+0.03,y,y+0.04,-0.02,0.02,mat.dark,g));
+    const closed=1.65+i*w-(i?0.03:0), open=1.65+i*0.02;
+    g.position.set(partOpen?open:closed,0,6.03+i*0.05);
+    partPanels.push({g,closed,open});
+  }
+}
+buildWalls();
+
+// ===== sanitary fixtures (installed at finishing stage) =====
+P=fixG;
+B(0.02,1.72,0,0.58,0.02,0.72,mat.white); B(0.1,1.64,0.5,0.585,0.1,0.64,M('#E6EEF0',{roughness:0.15}));
+Cyl(0.9,0.06,0.02,0.9,1.0,mat.dark); B(0.02,1.72,1.9,1.92,0.72,0.74,mat.dark);
+B(0.05,0.55,0.35,0.75,1.05,1.45,mat.white); B(0,0.2,0.2,1.2,1.0,1.5,mat.tile);
+B(0.7,1.45,0.55,0.85,1.5,1.98,mat.wood); B(0.75,1.4,0.85,0.95,1.54,1.94,mat.white); B(0.85,1.3,1.2,1.9,1.98,2.0,mat.mirror);
+
+// ===== furniture, kitchen, closet (last stage) =====
+P=furnG;
+B(4.32,4.9,0,3.0,0.85,2.65,mat.white);
+B(4.29,4.32,0.03,2.4,1.46,2.04,mat.mirror);
+[1.45,2.05].forEach(z=>B(4.285,4.32,0.03,2.97,z-0.005,z+0.005,mat.stone));
+B(4.285,4.32,2.395,2.405,0.85,2.65,mat.stone);
+B(2.2,2.5,0.15,0.95,0.1,0.92,mat.white); B(2.2,2.23,1.1,2.1,0.15,0.85,mat.mirror);
+B(3.6,4.3,0,0.02,0.1,0.7,mat.textile);
+B(0,2.3,0,0.86,2.1,2.7,mat.white); B(0,2.35,0.86,0.9,2.1,2.72,mat.stone);
+B(0,0.6,0,0.86,2.7,4.0,mat.white); B(0,0.62,0.86,0.9,2.7,4.0,mat.stone);
+B(0,0.66,0,3.0,4.0,4.66,mat.white);
+B(0.9,1.5,0.9,0.91,2.2,2.6,mat.dark);
+B(0.1,0.52,0.88,0.91,2.95,3.45,mat.grey); Cyl(0.08,3.2,0.02,0.9,1.2,mat.dark);
+B(0.6,0.61,0.1,0.82,3.52,3.97,mat.stone);
+B(1.62,2.22,0.02,0.84,2.7,2.71,mat.linen); { const d=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.19,0.02,32),mat.dark); d.rotation.x=Math.PI/2; d.position.set(1.92,0.45,2.715); furnG.add(d); }
+B(0,2.3,1.45,3.0,2.1,2.45,mat.white); B(0,0.35,1.45,3.0,2.7,4.0,mat.white);
+B(0,2.3,1.44,1.45,2.1,2.45,mat.linen);
+B(4.1,4.9,0.72,0.75,2.75,3.65,mat.wood); B(4.15,4.85,0,0.72,3.1,3.3,mat.dark);
+[[3.8,2.95],[3.8,3.45]].forEach(([x,z])=>{B(x-0.2,x+0.2,0.44,0.48,z-0.2,z+0.2,mat.textile);B(x-0.22,x-0.18,0.48,0.85,z-0.2,z+0.2,mat.dark);B(x-0.02,x+0.02,0,0.44,z-0.02,z+0.02,mat.dark);});
+Cyl(4.5,3.2,0.16,2.5,2.6,mat.dark); Cyl(4.5,3.2,0.005,2.6,3.0,mat.dark);
+B(3.95,4.9,0.1,0.45,4.05,6.0,mat.textile); B(4.65,4.9,0.45,0.85,4.05,6.0,mat.textile);
+B(3.95,4.9,0.45,0.65,4.05,4.25,mat.textile); B(3.95,4.9,0.45,0.65,5.8,6.0,mat.textile);
+B(4.0,4.6,0.45,0.55,4.3,5.0,mat.linen); B(4.0,4.6,0.45,0.55,5.05,5.75,mat.linen);
+B(1.6,3.7,0,0.015,4.2,5.9,mat.linen);
+Cyl(2.9,5.05,0.4,0.36,0.4,mat.wood); Cyl(2.9,5.05,0.05,0,0.36,mat.dark);
+B(0,0.4,0.3,0.6,4.3,5.8,mat.white); B(0,0.05,1.0,1.7,4.45,5.65,mat.screen);
+Cyl(4.7,4.0,0.015,0,1.6,mat.dark); Cyl(4.7,4.0,0.17,1.5,1.75,mat.linen);
+B(0,0.22,2.55,2.85,4.6,5.5,mat.white); B(0.2,0.225,2.58,2.62,4.65,5.45,mat.stone);
+B(2.9,4.9,0,0.3,6.35,7.95,mat.wood); B(2.95,4.85,0.3,0.52,6.4,7.9,mat.linen);
+B(4.78,4.9,0.3,1.15,6.3,8.0,mat.textile);
+B(3.1,4.2,0.5,0.56,6.45,7.85,mat.textile);
+B(1.7,2.1,0,0.45,6.9,7.9,mat.textile);
+Cyl(4.85,6.25,0.07,1.25,1.4,mat.dark); Cyl(4.85,8.1,0.07,1.25,1.4,mat.dark);
+B(2.2,2.55,0,2.98,8.1,8.16,mat.linen); B(4.0,4.35,0,2.98,8.1,8.16,mat.linen);
+B(0.2,0.7,0,0.45,7.4,7.9,mat.wood); B(0.1,0.8,0.45,0.5,7.3,8.0,mat.wood); Cyl(1.1,7.7,0.25,0.68,0.72,mat.dark); Cyl(1.1,7.7,0.03,0,0.68,mat.dark);
+P=scene;
+// radiator under window (installed by developer)
+B(2.65,3.9,0.15,0.65,8.18,8.26,mat.white,scene);
+
+// ===== ghosting =====
+function ghost(g,on){g.traverse(m=>{if(!m.isMesh)return; if(!m.userData.o)m.userData.o=m.material; m.material=on?mat.ghost:m.userData.o; m.castShadow=!on&&!m.userData.o.transparent;});}
+
+// ===== electrical =====
+const EC={panel:{c:'#2B2B2A',n:'Щиток'},light:{c:'#D9A21B',n:'Свет и выключатели'},socket:{c:'#E07B39',n:'Розетки'},power:{c:'#C8423B',n:'Отдельные линии (техника, тёплый пол)'},low:{c:'#3B7DD8',n:'Интернет, ТВ, домофон'}};
+const ELEC=[
+ ['Прихожая'],
+ ['Электрощиток: автоматы и УЗО','panel',3.2,1.75,0,'z+'],
+ ['Слаботочный щиток: интернет, роутер','low',2.65,1.75,0,'z+'],
+ ['Домофон','low',3.62,1.5,0,'z+'],
+ ['Выключатель света прихожей','light',3.62,0.9,0,'z+'],
+ ['Терморегулятор тёплого пола прихожей','power',3.2,0.9,0,'z+'],
+ ['Светильник прихожей','light',2.9,2.97,0.6,'c'],
+ ['Светильник прихожей','light',2.9,2.97,1.7,'c'],
+ ['Розетка: пылесос, зарядка','socket',2.2,0.3,1.95,'x+'],
+ ['Выключатель санузла + вентилятор','light',2.2,0.9,1.8,'x+'],
+ ['Терморегулятор тёплого пола санузла','power',2.2,0.9,1.96,'x+'],
+ ['Санузел'],
+ ['Розетка у зеркала, влагозащищённая','socket',1.5,1.1,2.0,'z-'],
+ ['Подсветка зеркала','light',1.07,2.0,2.0,'z-'],
+ ['Вытяжной вентилятор (в вентканал)','light',0.45,2.6,2.0,'z-'],
+ ['Светильник','light',1.1,2.97,1.0,'c'],
+ ['Электрический полотенцесушитель','power',2.1,0.9,1.85,'x-'],
+ ['Кухня'],
+ ['Варочная панель — силовая линия','power',1.2,0.6,2.1,'z+'],
+ ['Стиральная машина — отдельная линия','power',1.35,0.3,2.1,'z+'],
+ ['Посудомойка — в шкафу под мойкой','power',0,0.3,3.35,'x+'],
+ ['Холодильник','socket',0,0.3,4.33,'x+'],
+ ['Вытяжка (в верхнем шкафу)','socket',1.2,2.3,2.1,'z+'],
+ ['Розетка над столешницей (двойная)','socket',0.55,1.1,2.1,'z+'],
+ ['Розетка над столешницей (двойная)','socket',2.05,1.1,2.1,'z+'],
+ ['Розетка над столешницей','socket',0,1.1,3.8,'x+'],
+ ['Подсветка под верхними шкафами','light',0.3,1.5,2.1,'z+'],
+ ['Светильник кухни','light',1.2,2.97,2.9,'c'],
+ ['Светильник кухни','light',0.9,2.97,3.7,'c'],
+ ['Подвес над столом','light',4.5,2.97,3.2,'c'],
+ ['Выключатели: кухня, стол, гостиная','light',4.9,0.9,2.75,'x-'],
+ ['Розетка у стола','socket',4.9,0.3,3.0,'x-'],
+ ['Гостиная'],
+ ['Розетки за телевизором, 2 шт.','socket',0,1.1,5.25,'x+'],
+ ['Интернет и ТВ-кабель за телевизором','low',0,1.1,5.45,'x+'],
+ ['Розетка у тумбы','socket',0,0.35,4.45,'x+'],
+ ['Кондиционер — отдельная линия','power',0,2.75,5.62,'x+'],
+ ['Розетка у дивана','socket',4.9,0.3,3.98,'x-'],
+ ['Розетка у дивана','socket',4.9,0.3,6.05,'x-'],
+ ['Светильник гостиной','light',2.5,2.97,4.6,'c'],
+ ['Светильник гостиной','light',2.5,2.97,5.6,'c'],
+ ['Выключатель света балкона','light',1.4,0.9,6.08,'z-'],
+ ['Балкон'],
+ ['Светильник балкона','light',0.8,2.97,7.2,'c'],
+ ['Розетка на балконе','socket',1.53,0.3,7.0,'x-'],
+ ['Спальня'],
+ ['Выключатель у двери','light',1.65,0.9,6.45,'x+'],
+ ['Светильник спальни','light',3.3,2.97,7.2,'c'],
+ ['Розетка + USB у кровати','socket',4.9,0.6,6.2,'x-'],
+ ['Розетка + USB у кровати','socket',4.9,0.6,8.15,'x-'],
+ ['Бра у кровати','light',4.9,1.3,6.2,'x-'],
+ ['Бра у кровати','light',4.9,1.3,8.15,'x-'],
+ ['Розетка у окна','socket',1.65,0.3,7.6,'x+']
+];
+const PC={cold:{c:'#3B7DD8',n:'Холодная вода'},hot:{c:'#D2453D',n:'Горячая вода'},drain:{c:'#6F6C66',n:'Канализация'},valve:{c:'#2E9E6B',n:'Краны, счётчики'}};
+const PLUMB=[
+ ['Санузел'],
+ ['Стояки воды и канализации — положение уточнить по месту','drain',0.2,1.4,1.9,'r'],
+ ['Краны, счётчики, фильтры','valve',0.51,0.5,2.0,'z-'],
+ ['Унитаз: вода в инсталляцию','cold',0,0.9,1.2,'x+'],
+ ['Унитаз: канализация Ø110','drain',0,0.23,1.3,'x+'],
+ ['Ванна: смеситель, горячая','hot',0.82,0.8,0,'z+'],
+ ['Ванна: смеситель, холодная','cold',0.98,0.8,0,'z+'],
+ ['Ванна: слив Ø50 у торца','drain',0.3,0.05,0.35,'f'],
+ ['Раковина: горячая','hot',1.15,0.55,2.0,'z-'],
+ ['Раковина: холодная','cold',1.0,0.55,2.0,'z-'],
+ ['Раковина: слив Ø50','drain',1.07,0.45,2.0,'z-'],
+ ['Кухня'],
+ ['Мойка: горячая','hot',0,0.55,3.28,'x+'],
+ ['Мойка: холодная','cold',0,0.55,3.13,'x+'],
+ ['Мойка: слив Ø50','drain',0,0.45,3.2,'x+'],
+ ['Посудомойка: кран на холодной, слив в сифон мойки','cold',0,0.3,3.42,'x+'],
+ ['Стиральная машина: кран холодной воды','cold',1.5,0.65,2.1,'z+'],
+ ['Стиральная машина: слив Ø50 с сифоном','drain',1.55,0.45,2.1,'z+']
+];
+// pipe runs
+const pipes=[
+ ['cold',0.012,[[0.48,0.5,1.96],[0.48,0.12,1.96],[0.05,0.12,1.96],[0.05,0.12,1.2],[0.05,0.9,1.2]]],
+ ['cold',0.012,[[0.05,0.12,1.2],[0.05,0.12,0.05],[0.98,0.12,0.05],[0.98,0.8,0.05]]],
+ ['cold',0.012,[[0.48,0.12,1.96],[1.0,0.12,1.96],[1.0,0.55,1.96]]],
+ ['cold',0.012,[[0.3,0.12,1.96],[0.3,0.12,2.15],[0.05,0.12,2.15],[0.05,0.12,3.13],[0.05,0.55,3.13]]],
+ ['cold',0.012,[[0.05,0.12,3.13],[0.05,0.12,3.42],[0.05,0.3,3.42]]],
+ ['cold',0.012,[[0.3,0.12,2.15],[1.5,0.12,2.15],[1.5,0.65,2.15]]],
+ ['hot',0.012,[[0.54,0.5,1.93],[0.54,0.18,1.93],[0.1,0.18,1.93],[0.1,0.18,0.09],[0.82,0.18,0.09],[0.82,0.8,0.09]]],
+ ['hot',0.012,[[0.54,0.18,1.93],[1.15,0.18,1.93],[1.15,0.55,1.93]]],
+ ['hot',0.012,[[0.36,0.18,1.93],[0.36,0.18,2.2],[0.1,0.18,2.2],[0.1,0.18,3.28],[0.1,0.55,3.28]]],
+ ['drain',0.055,[[0.2,0,1.9],[0.2,3.0,1.9]]],
+ ['drain',0.055,[[0.08,0.23,1.3],[0.08,0.23,1.9],[0.2,0.23,1.9]]],
+ ['drain',0.025,[[0.3,0.05,0.35],[0.3,0.05,1.9],[0.2,0.05,1.9]]],
+ ['drain',0.025,[[1.07,0.45,1.97],[1.07,0.3,1.97],[0.25,0.3,1.97]]],
+ ['drain',0.025,[[0.04,0.45,3.2],[0.04,0.08,3.2],[0.04,0.08,2.16],[0.2,0.08,2.16],[0.2,0.08,1.95]]],
+ ['drain',0.025,[[1.55,0.45,2.16],[1.55,0.08,2.16],[0.2,0.08,2.16]]]
+];
+
+const catMat={}; const cm=c=>catMat[c]||(catMat[c]=M(c,{roughness:0.5,emissive:c,emissiveIntensity:0.15}));
+function seg(a,b,r,m,g){ B(Math.min(a[0],b[0])-r,Math.max(a[0],b[0])+r,Math.min(a[1],b[1])-r,Math.max(a[1],b[1])+r,Math.min(a[2],b[2])-r,Math.max(a[2],b[2])+r,m,g); }
+function poly(pts,r,m,g){ for(let i=1;i<pts.length;i++) seg(pts[i-1],pts[i],r,m,g); }
+function facePos(x,y,z,f,off){ return f==='x+'?[x+off,y,z]:f==='x-'?[x-off,y,z]:f==='z+'?[x,y,z+off]:f==='z-'?[x,y,z-off]:[x,y,z]; }
+
+const nums=[]; // {el,p,mode}
+function addNum(i,col,p,mode){const el=document.createElement('div');el.className='num';el.style.background=col;el.textContent=i;tagsEl.appendChild(el);nums.push({el,p:new THREE.Vector3(...p),mode});}
+
+// electrical scene
+const whitePlate=M('#FFFFFF',{roughness:0.4});
+const panelTop=[3.2,2.88,0.05];
+let n=0;
+const ceilY={light:2.93,socket:2.89,power:2.85,low:2.81,panel:2.88};
+ELEC.forEach(r=>{ if(r.length===1) return; n++; r.num=n;
+  const [name,cat,x,y,z,f]=r; const col=EC[cat].c; const m=cm(col);
+  const s=cat==='panel'?[0.4,0.5]:[0.09,0.09];
+  // colored marker (rough) + white plate (finish)
+  const mk=(g,mm,th)=>{ if(f==='c'){ Cyl(x,z,0.07,2.95,2.99,mm,g); return; }
+    const p=facePos(x,y,z,f,th/2);
+    if(f[0]==='x') B(p[0]-th/2,p[0]+th/2,y-s[1]/2,y+s[1]/2,z-s[0]/2,z+s[0]/2,mm,g); else B(x-s[0]/2,x+s[0]/2,y-s[1]/2,y+s[1]/2,p[2]-th/2,p[2]+th/2,mm,g); };
+  mk(elecG,m,0.05); if(cat!=='panel') mk(plateG,f==='c'?M('#FAFAF8',{emissive:'#FFF6DD',emissiveIntensity:0.5}):whitePlate,0.012);
+  // cable: panel -> ceiling -> above point -> down
+  if(cat!=='panel'){ const cy=ceilY[cat], p=facePos(x,y,z,f,0.03);
+    const route=[[panelTop[0],cy,panelTop[2]],[panelTop[0],cy,p[2]],[p[0],cy,p[2]]]; if(f!=='c') route.push([p[0],y,p[2]]);
+    poly([[panelTop[0],1.75,panelTop[2]],[panelTop[0],cy,panelTop[2]]],0.012,m,elecG);
+    poly(route,0.012,m,elecG); }
+  addNum(n,col,f==='c'?[x,2.75,z]:facePos(x,y+0.12,z,f,0.12),'elec');
+});
+// AC refrigerant line to balcony
+const copper=M('#B87333',{roughness:0.4,metalness:0.3});
+poly([[0.12,2.7,5.5],[0.05,2.7,5.5],[0.05,2.7,6.3],[0.05,2.3,6.3]],0.02,copper,elecG);
+B(-0.12,0.0,2.0,2.6,6.4,7.2,M('#DAD8D3'),elecG);
+// warm floor sensors
+[[3.2,0.9,0.0,3.2,0.3],[2.2,0.9,1.96,2.6,1.5]].forEach(([x,y,z,x2,z2])=>poly([[x,y,z+(z?0:0.03)],[x,0.02,z+(z?0:0.03)],[x2,0.02,z2]],0.008,cm('#C8423B'),elecG));
+
+// plumbing scene
+let pn=0;
+pipes.forEach(([t,r,pts])=>poly(pts,r,cm(PC[t].c),plumbG));
+PLUMB.forEach(r=>{ if(r.length===1) return; pn++; r.num=pn;
+  const [name,t,x,y,z,f]=r; const col=PC[t].c;
+  if(f==='r'){ addNum(pn,col,[0.2,1.5,1.9],'plumb'); return; }
+  if(f==='f'){ Cyl(x,z,0.04,0.0,0.07,cm(col),plumbG); addNum(pn,col,[x,0.25,z],'plumb'); return; }
+  const p=facePos(x,y,z,f,0.03);
+  B(p[0]-0.035,p[0]+0.035,y-0.035,y+0.035,p[2]-0.035,p[2]+0.035,cm(col),plumbG);
+  addNum(pn,col,facePos(x,y+0.13,z,f,0.13),'plumb');
+});
+
+// ===== dimension lines =====
+const dimG=grp(), dims=[]; const dimM=M('#2B2B2A');
+const fmt=v=>v.toFixed(2).replace('.',',');
+function dimX(x0,x1,z,txt){ B(x0,x1,0.01,0.025,z-0.008,z+0.008,dimM,dimG); [x0,x1].forEach(x=>B(x-0.008,x+0.008,0.01,0.025,z-0.08,z+0.08,dimM,dimG)); addDim((txt||fmt(x1-x0)),[(x0+x1)/2,0.02,z]); }
+function dimZ(z0,z1,x,txt){ B(x-0.008,x+0.008,0.01,0.025,z0,z1,dimM,dimG); [z0,z1].forEach(z=>B(x-0.08,x+0.08,0.01,0.025,z-0.008,z+0.008,dimM,dimG)); addDim((txt||fmt(z1-z0)),[x,0.02,(z0+z1)/2]); }
+function addDim(t,p){const el=document.createElement('div');el.className='dim';el.textContent=t;tagsEl.appendChild(el);dims.push({el,p:new THREE.Vector3(...p)});}
+dimX(0,4.9,-0.8);
+dimX(0,2.1,-0.4,'2,10 санузел'); dimX(2.2,3.75,-0.4); dimX(3.75,4.55,-0.4,'0,80 дверь'); dimX(4.55,4.9,-0.4,'0,35');
+dimZ(0,8.28,5.4);
+dimZ(0,2.0,-0.45,'2,00 санузел'); dimZ(2.1,6.08,-0.45); dimZ(6.2,8.28,-0.45,'2,08 балкон');
+dimX(1.65,4.9,8.75); dimX(2.55,4.0,8.45,'~1,45 окно'); dimX(0,1.53,8.75,'1,53 балкон');
+dimZ(0,6.2,5.0,'6,20 до перегородки');
+dimX(0.35,1.25,5.75,'0,90 дверь балкона');
+dimX(2.2,4.9,1.0,'2,70 коридор');
+
+// ===== zone labels =====
+const labels=[
+ ['Прихожая','',2.9,1.2,0.6],['Шкаф-купе','1,8 м',4.5,2.0,1.75,'furn'],['Санузел','4,3 м²',1.1,1.3,1.0],['Кухня','10,3 м²',1.6,1.5,3.4],
+ ['Кондиционер','',0.3,3.05,5.05,'furn'],['Стиралка','',1.92,0.95,2.9,'furn'],['Посудомойка','45 см',0.75,0.95,3.75,'furn'],
+ ['Гостиная','15,6 м²',2.3,1.3,5.3],['Спальня','',3.8,1.4,7.2],['Балкон','3 м²',0.8,1.3,7.1],['Вход','',4.15,2.3,-0.1],
+ ['Внешний блок','на фасад',-0.3,2.9,6.8,'elec']
+].map(([nm,s,x,y,z,only])=>{const el=document.createElement('div');el.className='tag';el.innerHTML=nm+(s?'<small>'+s+'</small>':'');tagsEl.appendChild(el);return{el,p:new THREE.Vector3(x,y,z),only};});
+function place(list,w,h){const v=new THREE.Vector3();for(const l of list){if(l.hide){l.el.style.display='none';continue;}v.copy(l.p).project(camera);l.el.style.left=((v.x+1)/2*w)+'px';l.el.style.top=((1-v.y)/2*h)+'px';l.el.style.display=v.z<1?'':'none';}}
+
+// ===== stage modes =====
+const STAGES={
+ plumb:{when:'Неделя 1–2 · до штукатурки и стяжки',title:'Черновая сантехника',
+  text:'Трубы воды и канализации прокладывают до штукатурки, стяжки и плитки. Серые контуры — где потом будут ванна, унитаз, кухня. Так понятно, куда вести каждую трубу.',
+  list:['Сначала найти стояки по месту — на схеме показано примерное положение.','Канализация с уклоном 2–3 см на метр в сторону стояка.','Перед штукатуркой опрессовать трубы — проверить давлением, что нет протечек.','Выводы закрыть заглушками, сфотографировать все трубы с рулеткой.'],
+  keys:PC,table:PLUMB,tt:'Точки сантехники',tn:'Высота — от чистого пола (после плитки или ламината). Горячая всегда слева, холодная справа. Расстояния взяты с плана — перед штроблением перепроверить рулеткой по месту и отметить карандашом на стене.'},
+ elec:{when:'Неделя 2 · до штукатурки',title:'Черновая электрика',
+  text:'Кабели идут по потолку в гофре, потом их закроет натяжной потолок. К розеткам и выключателям они спускаются вертикально в штробах. Серые контуры — будущая мебель: розетки стоят там, где они понадобятся.',
+  list:['Отдельный автомат на плиту, стиральную машину, посудомойку, кондиционер и каждый тёплый пол.','УЗО на санузел, кухню и все розетки.','Мат тёплого пола укладывают позже, перед плиткой. Сейчас — только кабель к терморегулятору и гофра для датчика.','Трасса кондиционера (медь и дренаж) — сейчас, до штукатурки.','Все штробы сфотографировать с рулеткой, чтобы потом не просверлить кабель.'],
+  keys:EC,table:ELEC,tt:'Точки электрики',tn:'Высота — от чистого пола до центра розетки. Для потолочных светильников — вывод кабеля на потолке. Расстояния взяты с плана — перед штроблением перепроверить рулеткой по месту и отметить карандашом на стене.'},
+ finish:{when:'Недели 5–8',title:'Чистовая отделка',
+  text:'Стены покрашены, в санузле и прихожей плитка с тёплым полом, в комнатах ламинат, натяжной потолок, стеклянная раздвижная перегородка из 4 створок. Папа ставит ванну, унитаз и раковину, электрик — розетки и светильники.',
+  list:['Порядок: плитка → шпаклёвка и покраска → натяжной потолок → ламинат → двери и плинтус.','Перед потолком — закладной брус под направляющие шкафа-купе и раздвижной перегородки.','Кухню и шкаф замеряют на этом этапе, ставят в конце.'],keys:null},
+ furn:{when:'Конец ремонта',title:'Готовая квартира',
+  text:'Кухня со стиральной машиной и посудомойкой, шкаф-купе, мебель, кондиционер над телевизором. Минимализм: светлые стены, светлый дуб, чёрные акценты.',
+  list:['Кухня, шкаф-купе и перегородка — по замеру, изготовление 3–5 недель.','Кондиционер вешают на готовую трассу.','Перегородка из 4 стеклянных створок уезжает целиком влево — кнопка «Открыть перегородку».','Тёплый пол в прихожей и санузле показан оранжевым.'],keys:null}
+};
+let mode='furn';
+const $=id=>document.getElementById(id);
+const cm_=v=>Math.round(v*100)+' см';
+function where(x,z,f){
+  if(f==='r') return 'найти по месту';
+  if(f==='c'||f==='f') return z>6.2 ? cm_(4.9-x)+' от правой стены, '+cm_(8.28-z)+' от стены с окном' : cm_(4.9-x)+' от правой стены, '+cm_(z)+' от входной стены';
+  if(f==='z+'&&z<0.01) return x>2.2 ? cm_(x-2.2)+' от стены санузла, по входной стене' : cm_(x)+' от левого угла, по стене у ванны';
+  if(f==='x+'&&Math.abs(x-2.2)<0.01) return cm_(z)+' от входной стены, по стене санузла';
+  if(f==='z-'&&Math.abs(z-2.0)<0.01) return cm_(x)+' от левого угла, по стене напротив ванны';
+  if(f==='x-'&&Math.abs(x-2.1)<0.01) return cm_(z)+' от угла с ванной, по стене с дверью';
+  if(f==='z+'&&Math.abs(z-2.1)<0.01) return cm_(x)+' от левой стены, по стене санузла (со стороны кухни)';
+  if(f==='x+'&&x<0.01) return z<2.0 ? cm_(z)+' от входной стены, по левой стене' : cm_(z-2.1)+' от стены санузла, по левой стене';
+  if(f==='x-'&&x>4.8) return z>6.2 ? cm_(8.28-z)+' от стены с окном, по правой стене' : cm_(z)+' от входной стены, по правой стене';
+  if(f==='z-'&&Math.abs(z-6.08)<0.01) return cm_(x)+' от левой стены, по стене балкона';
+  if(f==='x+'&&Math.abs(x-1.65)<0.01) return cm_(8.28-z)+' от стены с окном, по стене балкона';
+  if(f==='x-'&&Math.abs(x-1.53)<0.01) return cm_(z-6.2)+' от двери балкона, по стене';
+  return '';
+}
+function setMode(m){
+  mode=m; const rough=m==='plumb'||m==='elec';
+  ['plumb','elec','finish','furn'].forEach(k=>$('m-'+k).setAttribute('aria-pressed',k===m));
+  mat.wall.color.set(rough?WALL_ROUGH:WALL_FIN);
+  floorMain.material=rough?mat.concrete:mat.oak;
+  finishG.visible=!rough;
+  fixG.visible=true; ghost(fixG,rough);
+  furnG.visible=m!=='finish'; ghost(furnG,rough);
+  elecG.visible=m==='elec'; plumbG.visible=m==='plumb'; plateG.visible=!rough;
+  dimG.visible=m!=='furn'; for(const d of dims) d.hide=m==='furn';
+  warmG.visible=m==='elec'||$('warm').getAttribute('aria-pressed')==='true';
+  $('warm').hidden=rough; $('part').hidden=rough;
+  for(const nb of nums) nb.hide=nb.mode!==m;
+  for(const l of labels) l.hide=l.only?(l.only==='furn'?m!=='furn':l.only!==m):false;
+  const S=STAGES[m]; $('when').textContent=S.when; $('stTitle').textContent=S.title; $('stText').textContent=S.text;
+  $('stList').innerHTML=S.list.map(t=>'<li>'+t+'</li>').join('');
+  const keys=S.keys||(m==='furn'||m==='finish'?{a:{c:'#E4E2DE',n:'Стены'},b:{c:'#C9B79C',n:'Пол, светлый дуб'},c:{c:'#CFCAC2',n:'Плитка'},d:{c:'#2B2B2A',n:'Рама, акценты'},e:{c:'#E2703A',n:'Тёплый пол'}}:{});
+  let kh=Object.values(keys).map(k=>'<div><i style="background:'+k.c+'"></i>'+k.n+'</div>').join('');
+  if(m==='elec') kh+='<div><i style="background:#B87333"></i>Трасса кондиционера</div><div><i style="background:#E2703A"></i>Тёплый пол</div>';
+  if(rough) kh+='<div><i style="background:#7F93A8;opacity:.4"></i>Будущая мебель</div>';
+  $('keys').innerHTML=kh;
+  const ts=$('tableSec'); ts.hidden=!S.table;
+  if(S.table){ $('tblTitle').textContent=S.tt; $('tblNote').textContent=S.tn; const K=S.keys;
+    $('tbody').innerHTML=S.table.map(r=>{ if(r.length===1) return '<tr class="room"><td colspan="5">'+r[0]+'</td></tr>';
+      const [name,cat,,y,,f]=r; const h=f==='c'?'потолок':f==='r'?'—':f==='f'?'в полу':Math.round(y*100)+' см';
+      return '<tr><td class="n"><span style="background:'+K[cat].c+'">'+r.num+'</span></td><td>'+name+'</td><td class="h">'+h+'</td><td>'+where(r[2],r[4],f)+'</td><td>'+K[cat].n+'</td></tr>'; }).join(''); }
+}
+['plumb','elec','finish','furn'].forEach(k=>$('m-'+k).addEventListener('click',()=>setMode(k)));
+
+// ===== estimate =====
+const EST=[
+ {t:"1. Стены санузла, штукатурка, стяжка",st:"недели 1–3",items:[
+  ["Газоблок перегородочный 50×30×10 см (стены санузла ~12 м²)",90,"шт",690,"мат",null,1],
+  ["Клей для газоблока, 25 кг",3,"меш",3000,"мат",null,1],
+  ["Кладка стен санузла",12,"м²",3000,"бригада",null,0],
+  ["Грунтовка глубокого проникновения, 10 л",6,"шт",4000,"мат",null,1],
+  ["Гипсовая штукатурка (Ротбанд / Vetonit), 30 кг",35,"меш",2800,"мат",null,1],
+  ["Цементная штукатурка для санузла, 25 кг",8,"меш",2000,"мат",null,0],
+  ["Маяки, уголки, сетка",1,"компл",10000,"мат",null,0],
+  ["Штукатурка стен машинная (работа)",100,"м²",2000,"бригада",null,0],
+  ["Стяжка пола полусухая (материал + работа)",34,"м²",3500,"бригада",null,0]]},
+ {t:"2. Сантехника черновая",st:"недели 1–2",items:[
+  ["Труба PPR 20 мм PN20 / армированная для горячей",35,"м",400,"папа",null,1],
+  ["Фитинги PPR: уголки, тройники, муфты, водорозетки",1,"компл",20000,"папа",null,1],
+  ["Кран шаровой на вводе",2,"шт",4000,"папа",null,0],
+  ["Фильтр грубой очистки",2,"шт",4000,"папа",null,0],
+  ["Редуктор давления",2,"шт",8000,"папа",null,0],
+  ["Счётчик воды (если нет от застройщика)",2,"шт",8000,"папа",null,0],
+  ["Кран под стиральную машину и посудомойку",2,"шт",2500,"папа",null,0],
+  ["Канализация 110 мм: труба, отводы, тройник",1,"компл",8000,"папа",null,0],
+  ["Канализация 50 мм: трубы 12 м + фитинги",1,"компл",10000,"папа",null,1],
+  ["Сифон для стиральной машины встраиваемый",1,"шт",5000,"папа",null,0],
+  ["Инсталляция для подвесного унитаза с кнопкой",1,"шт",60000,"папа",null,0],
+  ["Хомуты, крепёж, утеплитель для труб",1,"компл",10000,"папа",null,0],
+  ["Гидроизоляция обмазочная (Aquaset) + лента",1,"компл",30000,"папа",null,1],
+  ["Короб стояков: гипсокартон, профиль, ревизионный люк",1,"компл",20000,"папа",null,1]]},
+ {t:"3. Электрика черновая",st:"неделя 2",items:[
+  ["Кабель ВВГнг-LS 3×1,5 (свет)",120,"м",450,"мат",null,1],
+  ["Кабель ВВГнг-LS 3×2,5 (розетки, техника, тёплый пол)",200,"м",720,"мат",null,1],
+  ["Кабель ВВГнг-LS 3×6 (варочная панель)",15,"м",1500,"мат",null,1],
+  ["Витая пара UTP cat.5e (интернет)",20,"м",150,"мат",null,0],
+  ["ТВ-кабель коаксиальный",15,"м",200,"мат",null,0],
+  ["Гофра ПВХ 20 мм",250,"м",110,"мат",null,1],
+  ["Подрозетники",40,"шт",150,"мат",null,0],
+  ["Распаечные коробки",10,"шт",500,"мат",null,0],
+  ["Клеммы Wago",100,"шт",150,"мат",null,0],
+  ["Щиток встраиваемый на 24 модуля (DKC)",1,"шт",22000,"мат",null,1],
+  ["Вводной автомат 2P 40A",1,"шт",3000,"мат",null,1],
+  ["Реле напряжения (Welrok)",1,"шт",20000,"мат",null,1],
+  ["Дифавтомат 16A 30 мА (розетки, санузел, стиралка, посудомойка, тёплые полы)",7,"шт",6000,"мат",null,1],
+  ["Дифавтомат 32A (варочная панель)",1,"шт",8000,"мат",null,0],
+  ["Автомат 1P 10–16A (свет, кондиционер)",3,"шт",1000,"мат",null,1],
+  ["Шина, DIN-рейка, маркировка",1,"компл",5000,"мат",null,0],
+  ["Слаботочный щиток для роутера",1,"шт",12000,"мат",null,0],
+  ["Крепёж, дюбель-хомуты, алебастр",1,"компл",15000,"мат",null,0],
+  ["Работа электрика: ~50 точек, штробы, щиток, чистовой монтаж — уточнить",1,"усл",350000,"электрик",null,0]]},
+ {t:"4. Тёплый пол",st:"неделя 5",items:[
+  ["Нагревательный мат 150 Вт/м² (Spyheat; прихожая 3,5 + санузел 1,5 м²)",5,"м²",9600,"мат",null,1],
+  ["Терморегулятор с датчиком пола (Welrok)",2,"шт",15000,"мат",null,1]]},
+ {t:"5. Плитка",st:"неделя 5",items:[
+  ["Керамогранит 60×60 / 60×120: санузел стены и пол, пол прихожей",34,"м²",5000,"мат",null,1],
+  ["Плиточный клей, 25 кг",14,"меш",3000,"мат",null,1],
+  ["Затирка, крестики, система выравнивания",1,"компл",15000,"мат",null,0],
+  ["Укладка плитки (работа) — уточнить",31,"м²",7000,"бригада",null,0]]},
+ {t:"6. Стены, потолок, пол",st:"недели 6–7",items:[
+  ["Шпаклёвка стартовая, 25 кг",10,"меш",2000,"мат",null,1],
+  ["Шпаклёвка финишная, 20 кг",10,"меш",2600,"мат",null,1],
+  ["Стеклохолст малярный",1,"рулон",12000,"мат",null,1],
+  ["Краска водоэмульсионная интерьерная, 14 кг",3,"ведро",8000,"мат",null,1],
+  ["Валики, кисти, малярный скотч",1,"компл",10000,"мат",null,0],
+  ["Шпаклёвка и покраска стен (работа) — уточнить",90,"м²",3000,"бригада",null,0],
+  ["Откосы окна и балконной двери",1,"компл",30000,"бригада",null,0],
+  ["Натяжной потолок матовый с монтажом — уточнить",36,"м²",4500,"мастер",null,0],
+  ["Ламинат 33 класс (Tarkett / Navigator)",28,"м²",8300,"мат",null,1],
+  ["Подложка под ламинат 3 мм",28,"м²",300,"мат",null,1],
+  ["Плинтус",30,"м",1300,"мат",null,1],
+  ["Укладка ламината и плинтуса",27,"м²",2000,"бригада",null,0],
+  ["Дверь в санузел с коробкой и фурнитурой",1,"шт",70000,"мат",null,0],
+  ["Установка двери",1,"шт",15000,"бригада",null,0],
+  ["Порожек плитка/ламинат",1,"шт",5000,"мат",null,0]]},
+ {t:"7. Электрика чистовая",st:"неделя 8",items:[
+  ["Розетка с заземлением",15,"шт",1200,"мат",null,1],
+  ["Розетка влагозащищённая IP44 (санузел, балкон)",2,"шт",2500,"мат",null,1],
+  ["Розетка с USB у кровати",2,"шт",5000,"мат",null,1],
+  ["Силовая розетка 32A для варочной панели",1,"шт",4000,"мат",null,0],
+  ["Выключатель 1–2 клавиши",6,"шт",2000,"мат",null,1],
+  ["Рамки",20,"шт",500,"мат",null,0],
+  ["Розетка интернет + ТВ",1,"шт",4000,"мат",null,0],
+  ["Выход кабеля (кондиционер, полотенцесушитель)",2,"шт",1500,"мат",null,0],
+  ["Светильник накладной GX53 + лампа",9,"шт",2500,"мат",null,1],
+  ["Подвесной светильник над столом",1,"шт",25000,"мат",10000,0],
+  ["Бра у кровати",2,"шт",15000,"мат",6000,0],
+  ["LED-лента под шкафы 3 м с блоком и профилем",1,"компл",15000,"мат",8000,0],
+  ["Вытяжной вентилятор с обратным клапаном",1,"шт",12000,"мат",null,0]]},
+ {t:"8. Сантехника чистовая",st:"неделя 8",items:[
+  ["Ванна акриловая 150–170×70 (Тритон / VentoSpa) + ножки, экран",1,"шт",80000,"папа",null,1],
+  ["Смеситель для ванны с душем (Trigor)",1,"шт",15000,"папа",null,1],
+  ["Стеклянная шторка на ванну",1,"шт",40000,"папа",22000,0],
+  ["Унитаз подвесной",1,"шт",60000,"папа",null,0],
+  ["Тумба с раковиной подвесная 60 см",1,"шт",120000,"папа",null,1],
+  ["Смеситель для раковины (Trigor)",1,"шт",10000,"папа",null,1],
+  ["Зеркало с подсветкой",1,"шт",35000,"папа",18000,0],
+  ["Полотенцесушитель электрический",1,"шт",45000,"электрик",null,0],
+  ["Кухонная мойка + смеситель",1,"компл",45000,"папа",30000,1],
+  ["Сифоны, гибкая подводка, герметик",1,"компл",15000,"папа",null,0],
+  ["Аксессуары санузла: держатели, крючки",1,"компл",20000,"папа",8000,0]]},
+ {t:"9. Встроенная мебель",st:"замер — неделя 4, установка — неделя 8",items:[
+  ["Стеклянная раздвижная перегородка ~10 м² (от 65 000 ₸/м² на satu) — уточнить",1,"шт",700000,"фирма",null,1],
+  ["Шкаф-купе 1,8 × 0,6 × 3 м (от 190 000 ₸)",1,"шт",250000,"фирма",null,1],
+  ["Кухонный гарнитур ~4 пог. м, эконом (от 40–80 тыс/пог. м)",1,"шт",450000,"фирма",null,1],
+  ["Обувница",1,"шт",40000,"мат",null,0]]},
+ {t:"10. Техника",st:"к установке кухни",items:[
+  ["Холодильник",1,"шт",250000,"мат",null,0],
+  ["Варочная панель индукционная",1,"шт",120000,"мат",null,0],
+  ["Вытяжка встраиваемая",1,"шт",50000,"мат",null,0],
+  ["Микроволновка",1,"шт",40000,"мат",null,0],
+  ["Стиральная машина",1,"шт",180000,"мат",null,0],
+  ["Посудомоечная машина 45 см встраиваемая",1,"шт",200000,"мат",null,0],
+  ["Кондиционер с монтажом и трассой",1,"шт",280000,"мастер",null,0],
+  ["Телевизор",1,"шт",150000,"мат",null,0]]},
+ {t:"11. Мебель и текстиль",st:"в конце",items:[
+  ["Диван",1,"шт",300000,"мат",null,0],
+  ["Кровать 160×200",1,"шт",150000,"мат",null,0],
+  ["Матрас 160×200",1,"шт",150000,"мат",null,0],
+  ["Стол + 2 стула",1,"компл",100000,"мат",null,0],
+  ["ТВ-тумба подвесная",1,"шт",50000,"мат",null,0],
+  ["Журнальный столик",1,"шт",25000,"мат",null,0],
+  ["Прикроватные тумбы",2,"шт",20000,"мат",null,0],
+  ["Шторы + скрытый карниз",1,"компл",80000,"мат",45000,0],
+  ["Ковёр",1,"шт",40000,"мат",20000,0],
+  ["Торшер",1,"шт",25000,"мат",10000,0],
+  ["Постельное, подушки, плед, декор",1,"компл",60000,"мат",30000,0]]},
+ {t:"12. Прочее",st:"весь ремонт",items:[
+  ["Вывоз мусора, доставка, подъём материалов",1,"усл",100000,"—",null,0],
+  ["Расходники, инструмент, мешки, плёнка",1,"компл",50000,"—",null,0],
+  ["Уборка после ремонта",1,"усл",30000,"—",null,0],
+  ["Датчики протечки воды (ванна, мойка, стиралка)",3,"шт",6000,"мат",2500,0],
+  ["Умный замок на входную дверь — удобно для сдачи",1,"шт",90000,"мат",40000,0]]}
+];
+const WHO={'мат':'покупка','бригада':'бригада','папа':'папа','электрик':'электрик','мастер':'мастер','фирма':'фирма','—':'—'};
+const money=v=>Math.round(v).toLocaleString('ru-RU').replace(/\u00a0/g,' ');
+let estState={}; try{estState=JSON.parse(localStorage.getItem('kv72-est')||'{}');}catch(e){estState={};}
+let cnOn=!!estState.cnOn;
+function saveEst(){try{localStorage.setItem('kv72-est',JSON.stringify(estState));}catch(e){}}
+function val(id,def){const v=estState[id];return (v===undefined||v==='')?def:+v;}
+function renderEst(){
+  let html=''; EST.forEach((sec,si)=>{
+    html+='<tr class="sec"><td colspan="7">'+sec.t+'<small>'+sec.st+'</small></td></tr>';
+    sec.items.forEach((it,ii)=>{const id=si+'-'+ii; const useCn=cnOn&&it[5]; const pk=(useCn?'c':'p')+id;
+      html+='<tr'+(useCn?' class="cnrow"':'')+'><td>'+it[0]+(it[6]?' <span class="src">satu.kz</span>':'')+'</td><td class="num-c"><input class="q" id="q'+id+'" inputmode="decimal" value="'+val('q'+id,it[1])+'"></td><td>'+it[2]+'</td>'+
+        '<td class="num-c"><input id="'+pk+'" inputmode="decimal" value="'+val(pk,useCn?it[5]:it[3])+'"></td><td class="num-c" id="s'+id+'"></td><td class="who">'+WHO[it[4]]+'</td>'+
+        '<td>'+(it[5]?'<span class="cn">≈ '+money(it[5])+' ₸</span>':'')+'</td></tr>';});
+    html+='<tr class="sub"><td colspan="4">Итого по разделу</td><td class="num-c" id="st'+si+'"></td><td></td><td></td></tr>';
+  });
+  $('estBody').innerHTML=html; calcEst();
+}
+function calcEst(){
+  let save_=0; const secT=[]; EST.forEach((sec,si)=>{let t=0; sec.items.forEach((it,ii)=>{const id=si+'-'+ii; const q=val('q'+id,it[1]), pr=(cnOn&&it[5])?val('c'+id,it[5]):val('p'+id,it[3]); if(it[5]){const pl=val('p'+id,it[3]),pc=val('c'+id,it[5]); if(isFinite(q)&&isFinite(pl)&&isFinite(pc)) save_+=q*(pl-pc);} const sum=(isFinite(q)?q:0)*(isFinite(pr)?pr:0); t+=sum; $('s'+id).textContent=money(sum);}); secT.push(t); $('st'+si).textContent=money(t);});
+  const rem=secT.slice(0,8).reduce((a,b)=>a+b,0), built=secT[8], tech=secT[9]+secT[10], other=secT[11], sub=rem+built+tech+other, res=sub*0.1;
+  $('estTiles').innerHTML=[['Ремонт (разделы 1–8)',rem],['Встроенная мебель',built],['Техника и мебель',tech],['Прочее',other],['Запас 10% на непредвиденное',res],[cnOn?'Уже сэкономлено на Китае':'Можно сэкономить на Китае',save_]].map(([n,v])=>'<div><span>'+n+'</span><b>'+money(v)+' ₸</b></div>').join('')+
+    '<div class="total"><span>Всего с запасом</span><b>'+money(sub+res)+' ₸</b></div>';
+}
+$('estBody').addEventListener('input',e=>{const t=e.target; if(t.tagName!=='INPUT')return; estState[t.id]=t.value.replace(',','.').replace(/\s/g,''); saveEst(); calcEst();});
+$('estReset').addEventListener('click',()=>{estState={cnOn}; saveEst(); renderEst();});
+function syncCn(){const b=$('estCn'); b.setAttribute('aria-pressed',cnOn); b.textContent=cnOn?'Считать всё в местных ценах':'Считать с заказом из Китая';}
+$('estCn').addEventListener('click',()=>{cnOn=!cnOn; estState.cnOn=cnOn; saveEst(); syncCn(); renderEst();}); syncCn();
+renderEst();
+
+// ===== orbit =====
+const target=new THREE.Vector3(2.45,0.6,4.1);
+let sph={r:13,th:-0.55,ph:0.95}, goal=null;
+const views={v3d:{r:13,th:-0.55,ph:0.95},vtop:{r:12.5,th:0,ph:0.02},vbed:{r:6.2,th:0.02,ph:1.12}};
+function applyCam(){const {r,th,ph}=sph;camera.position.set(target.x+r*Math.sin(ph)*Math.sin(th),target.y+r*Math.cos(ph),target.z+r*Math.sin(ph)*Math.cos(th));
+ if(ph<0.05) camera.up.set(0,0,-1); else camera.up.set(0,1,0); camera.lookAt(target);}
+const ptrs=new Map(); let pinch0=0;
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});goal=null;
+ if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a.x-b.x,a.y-b.y);}});
+canvas.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;const p=ptrs.get(e.pointerId);
+ if(ptrs.size===1){sph.th-=(e.clientX-p.x)*0.008;sph.ph=Math.min(1.5,Math.max(0.02,sph.ph-(e.clientY-p.y)*0.006));}
+ p.x=e.clientX;p.y=e.clientY;
+ if(ptrs.size===2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0){sph.r=Math.min(22,Math.max(3,sph.r*pinch0/d));}pinch0=d;}
+ setPressed(null);});
+const up=e=>{ptrs.delete(e.pointerId);pinch0=0;};
+canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+canvas.addEventListener('wheel',e=>{e.preventDefault();goal=null;sph.r=Math.min(22,Math.max(3,sph.r*(1+Math.sign(e.deltaY)*0.08)));},{passive:false});
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setPressed(id){['v3d','vtop','vbed'].forEach(k=>$(k).setAttribute('aria-pressed',k===id));}
+['v3d','vtop','vbed'].forEach(id=>$(id).addEventListener('click',()=>{goal=Object.assign({},views[id]);if(reduce){sph=goal;goal=null;}setPressed(id);}));
+const wb=$('walls');
+wb.addEventListener('click',()=>{const hi=wb.getAttribute('aria-pressed')!=='true';wb.setAttribute('aria-pressed',hi);H=hi?3.0:1.1;buildWalls();});
+$('warm').addEventListener('click',()=>{const b=$('warm');const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);warmG.visible=on||mode==='elec';});
+$('part').addEventListener('click',()=>{partOpen=!partOpen;const b=$('part');b.setAttribute('aria-pressed',partOpen);b.textContent=partOpen?'Закрыть перегородку':'Открыть перегородку';
+  if(reduce) partPanels.forEach(p=>p.g.position.x=partOpen?p.open:p.closed);});
+const lb=$('labels');
+lb.addEventListener('click',()=>{const on=lb.getAttribute('aria-pressed')!=='true';lb.setAttribute('aria-pressed',on);tagsEl.hidden=!on;});
+
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+ views.v3d.r=w/h<1?19:13; views.vtop.r=w/h<1?17:12.5;}
+new ResizeObserver(resize).observe(stage); resize(); sph.r=views.v3d.r;
+setMode('furn');
+
+function tick(){
+  if(goal){let dth=goal.th-sph.th;dth=Math.atan2(Math.sin(dth),Math.cos(dth));
+    sph.th+=dth*0.12;sph.ph+=(goal.ph-sph.ph)*0.12;sph.r+=(goal.r-sph.r)*0.12;
+    if(Math.abs(dth)+Math.abs(goal.ph-sph.ph)+Math.abs(goal.r-sph.r)<0.002){sph=Object.assign({},goal);goal=null;}}
+  for(const p of partPanels){const t=partOpen?p.open:p.closed; p.g.position.x+=(t-p.g.position.x)*0.08;}
+  applyCam(); renderer.render(scene,camera);
+  const w=stage.clientWidth,h=stage.clientHeight; place(labels,w,h); place(nums,w,h); place(dims,w,h);
+  requestAnimationFrame(tick);
+}
+tick();
+})();
+</script>
+
+</body>
+</html>
