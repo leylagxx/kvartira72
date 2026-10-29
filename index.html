@@ -190,7 +190,17 @@ B(-0.01,1.0,0,0.005,6.25,8.2,mat.balc,scene);
 B(-0.3,5.2,-0.2,-0.02,-0.3,8.6,mat.grey,scene);
 P=finishG;
 B(0,2.4,0,0.004,0,1.7,mat.tile);
-B(2.5,4.9,0,0.004,0,2.0,mat.tile);
+// пол прихожей: керамогранит Medici PM213460 200×200 (молочный с чёрными лепестками)
+{ const cv=document.createElement('canvas'); cv.width=cv.height=256; const x=cv.getContext('2d'), N=256, c=128;
+  x.fillStyle='#F3EFE4'; x.fillRect(0,0,N,N); x.fillStyle='#121212'; x.fillRect(c-1.5,0,3,N); x.fillRect(0,c-1.5,N,3);
+  const L=c*0.34, W=c*0.075;
+  [[c,c],[c,0],[c,N],[0,c],[N,c]].forEach(([px,py])=>[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+    x.beginPath(); x.ellipse(px+dx*L/2,py+dy*L/2,dx?L/2:W,dx?W:L/2,0,0,Math.PI*2); x.fill(); }));
+  [[0,0],[N,0],[0,N],[N,N]].forEach(([px,py])=>{ x.beginPath(); x.arc(px,py,N*0.17,0,Math.PI*2); x.fill(); });
+  x.strokeStyle='#BEBCB6'; x.lineWidth=2; x.strokeRect(0,0,N,N);
+  const t=new THREE.CanvasTexture(cv); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(12,10); t.anisotropy=8;
+  mat.hallTile=M('#ffffff',{map:t,roughness:0.4}); }
+B(2.5,4.9,0,0.004,0,2.0,mat.hallTile);
 const warmM=M('#E2703A',{transparent:true,opacity:0.45,emissive:'#E2703A',emissiveIntensity:0.25});
 [[2.85,4.25,0.1,1.95],[0.78,2.35,0.72,1.08],[1.82,2.35,1.08,1.62]].forEach(([a,b,c,d])=>B(a,b,0.006,0.01,c,d,warmM,warmG));
 
@@ -586,7 +596,8 @@ const EST=[
   ["Нагревательный мат 150 Вт/м² (Spyheat; прихожая 3,5 + санузел 1,5 м²)",5,"м²",9600,"мат",null,1],
   ["Терморегулятор с датчиком пола (Welrok)",2,"шт",15000,"мат",null,1]]},
  {t:"5. Плитка",st:"неделя 5",items:[
-  ["Керамогранит 60×60 / 60×120: санузел стены и пол, пол прихожей",34,"м²",5000,"мат",null,1],
+  ["Керамогранит 60×60 / 60×120: санузел стены и пол",29,"м²",5000,"мат",null,1],
+  ["Керамогранит Medici PM213460 200×200 на пол прихожей (4,8 м² + запас; Мир Керамики, в наличии в Алматы)",5.5,"м²",28900,"мат",null,1],
   ["Плиточный клей, 25 кг",14,"меш",3000,"мат",null,1],
   ["Затирка, крестики, система выравнивания",1,"компл",15000,"мат",null,0],
   ["Укладка плитки (работа) — уточнить",31,"м²",7000,"бригада",null,0]]},
