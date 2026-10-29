@@ -200,7 +200,7 @@ B(0,2.4,0,0.004,0,1.7,mat.tile);
   x.strokeStyle='#BEBCB6'; x.lineWidth=2; x.strokeRect(0,0,N,N);
   const t=new THREE.CanvasTexture(cv); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(12,10); t.anisotropy=8;
   mat.hallTile=M('#ffffff',{map:t,roughness:0.4}); }
-B(2.5,4.9,0,0.004,0,2.0,mat.hallTile);
+B(2.5,4.9,0,0.001,0,1.985,mat.hallTile); B(2.5,4.9,0,0.0025,1.985,2.015,M('#8C8780',{metalness:0.6,roughness:0.35})); // в уровень с ламинатом, порожек 30 мм
 const warmM=M('#E2703A',{transparent:true,opacity:0.45,emissive:'#E2703A',emissiveIntensity:0.25});
 [[2.85,4.25,0.1,1.95],[0.78,2.35,0.72,1.08],[1.82,2.35,1.08,1.62]].forEach(([a,b,c,d])=>B(a,b,0.006,0.01,c,d,warmM,warmG));
 
